@@ -2,6 +2,7 @@ import requests
 import os 
 import json 
 
+
 my_login = os.environ['user']
 my_pass = os.environ['pass']
 
@@ -44,24 +45,23 @@ batchResponse = requests.post(batchUrl,json=batchBody,headers=batchHeaders)
 
 obj=batchResponse.json()
 
+
 #print("Search response: ",json.dumps(obj,indent=4),"\n")
 
-print("\nPrinting nested dictionary as a key-value pair\n")
+
+print("Search response: ",json.dumps(obj["receipt"],indent=4),"\n")
+print("Search response: ",json.dumps(obj["pageInfo"],indent=4),"\n")
+
+print("\nPrinting nested dictionary as a key-value pair","\n")
 
 for i in obj['content']:
   if "caseLink" in i.keys():
     print("Court ID:", i['courtId'])
     print("Court Title :", i['caseTitle'])
-    print("Link:", i['caseLink'],"/n")
+    link = i['caseLink'].replace("iqquerymenu","qryParties")
+    print("Link:", link,"\n")
 
-    newLink = i['caseLink']
-
-    print ("new Link:", newLink.replace("iqquerymenu","qryParties"))
-    
-    temp = newLink.replace("iqquerymenu","qryParties")
-    print (requests.post(temp,headers=batchHeaders)) 
-    
-
+  
 
 
 #logout 
