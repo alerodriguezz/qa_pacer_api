@@ -1,9 +1,7 @@
 import requests
 import os 
 import json 
-import mechanize
-import ssl
-
+import webbot
 my_login = os.environ['user']
 my_pass = os.environ['pass']
 
@@ -62,17 +60,13 @@ for i in obj['content']:
     link = i['caseLink'].replace("iqquerymenu","qryParties")
     print("Link:", link,"\n")
 
-    ssl._create_default_https_context = ssl._create_unverified_context
-    browser = mechanize.Browser()
-    browser.open(link)
-    for f in browser.forms():
-        print (f.name, "\")
-    #browser.select_form(nr = 0)
-    #browser.form['username'] = my_login
-    #browser.form['password'] = my_pass
-    #browser.submit()
-    
-    print (browser.response().read())
+    from webbot import Browser 
+    web = Browser(showWindow = True)
+    web.go_to(link) 
+    web.type(my_login , into='Username')
+    web.type(my_pass , into='Password' ) # specific selection
+    web.click('Login' , tag='span') # you are logged in ^_^
+
   
 #logout 
 url="https://qa-login.uscourts.gov/services/cso-logout"

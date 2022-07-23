@@ -10,6 +10,7 @@ numpy = "^1.22.2"
 replit = "^3.2.4"
 requests = "^2.28.1"
 mechanize = "^0.4.8"
+webbot = "^0.34"
 
 [tool.poetry.dev-dependencies]
 
