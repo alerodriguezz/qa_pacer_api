@@ -1,7 +1,8 @@
 import requests
 import os 
 import json 
-
+import mechanicalsoup
+import wget
 
 my_login = os.environ['user']
 my_pass = os.environ['pass']
@@ -53,6 +54,22 @@ print("Search response: ",json.dumps(obj["receipt"],indent=4),"\n")
 print("Search response: ",json.dumps(obj["pageInfo"],indent=4),"\n")
 
 print("\nPrinting nested dictionary as a key-value pair","\n")
+
+br= mechanicalsoup.StatefulBrowser()
+login_link="https://qa-login.uscourts.gov/csologin/login.jsf"
+
+br.open(login_link)
+
+br.get_current_page()
+br.select_form('form[id="loginForm"]')
+br.get_current_form()
+
+br["loginForm:loginName"]= my_login
+br["loginForm:password"]= my_pass
+save_button = br.get_current_page().find('button', id='loginForm:fbtnLogin')
+br.submit_selected(btnName=save_button)
+br.launch_browser()
+
 
 for i in obj['content']:
   if "caseLink" in i.keys():
