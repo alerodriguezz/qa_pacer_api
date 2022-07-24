@@ -2,7 +2,9 @@ import requests
 import os 
 import json 
 import mechanicalsoup
-import wget
+import warnings
+
+warnings.filterwarnings(action='ignore')
 
 my_login = os.environ['user']
 my_pass = os.environ['pass']
@@ -52,8 +54,12 @@ obj=batchResponse.json()
 
 print("Search response: ",json.dumps(obj["receipt"],indent=4),"\n")
 print("Search response: ",json.dumps(obj["pageInfo"],indent=4),"\n")
+#print("Search response: ",json.dumps(obj["content"],indent=4),"\n")
+
 
 print("\nPrinting nested dictionary as a key-value pair","\n")
+
+
 
 br= mechanicalsoup.StatefulBrowser()
 login_link="https://qa-login.uscourts.gov/csologin/login.jsf"
@@ -72,20 +78,23 @@ br.submit_selected()
 
 for i in obj['content']:
   if "caseLink" in i.keys():
-    print("Court ID:", i['courtId'])
+    print("Court ID: ", i['courtId'])
+    print("Case ID: ",i['caseId'])
     print("Court Title :", i['caseTitle'])
-    link = i['caseLink'].replace("iqquerymenu","qryParties")
-    print("Link:", link,"\n")
+    print("Federal Bankruptcy Chapter: ", i['bankruptcyChapter'])
+    print("Date Filed: ",i['dateFiled'])
+    link = i['caseLink'].replace("iqquerymenu","NoticeOfFiling")
+    #print("Link:", link,"\n")
     br.open(link,verify=False)
     try:
       br.get_current_page()
       br.select_form('form[id="referrer_form"]')
       br.get_current_form()
       br.submit_selected()
-      br.launch_browser()
     except:
       print("no referrer form") 
-    print(br.get_current_page().text[:500])
+    print("Debtor Info: \n")
+    print(br.get_current_page().find("p",id="3"),"\n\n")
 
     
   
