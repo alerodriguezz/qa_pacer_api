@@ -66,9 +66,8 @@ br.get_current_form()
 
 br["loginForm:loginName"]= my_login
 br["loginForm:password"]= my_pass
-save_button = br.get_current_page().find('button', id='loginForm:fbtnLogin')
-br.submit_selected(btnName=save_button)
-br.launch_browser()
+br.submit_selected()
+
 
 
 for i in obj['content']:
@@ -77,7 +76,18 @@ for i in obj['content']:
     print("Court Title :", i['caseTitle'])
     link = i['caseLink'].replace("iqquerymenu","qryParties")
     print("Link:", link,"\n")
+    br.open(link,verify=False)
+    try:
+      br.get_current_page()
+      br.select_form('form[id="referrer_form"]')
+      br.get_current_form()
+      br.submit_selected()
+      br.launch_browser()
+    except:
+      print("no referrer form") 
+    print(br.get_current_page().text[:500])
 
+    
   
 
 
