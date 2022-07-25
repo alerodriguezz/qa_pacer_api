@@ -3,6 +3,9 @@ import os
 import json 
 import mechanicalsoup
 import warnings
+import pandas
+from commonregex import CommonRegex
+import re
 
 warnings.filterwarnings(action='ignore')
 
@@ -74,7 +77,15 @@ br["loginForm:loginName"]= my_login
 br["loginForm:password"]= my_pass
 br.submit_selected()
 
-
+data={
+  'Name/Business':[],
+  'Address':[],
+  'Phone Number':[],
+  'SSN':[],
+  'Bankruptcy Chapter': [],
+  'Date Filed' : [],
+  'Case Id' : []
+}
 
 for i in obj['content']:
   if "caseLink" in i.keys():
@@ -91,10 +102,31 @@ for i in obj['content']:
       br.select_form('form[id="referrer_form"]')
       br.get_current_form()
       br.submit_selected()
+      #br.launch_browser()
     except:
       print("no referrer form") 
     print("Debtor Info: \n")
-    print(br.get_current_page().find("p",id="3"),"\n\n")
+    #print (br.get_current_page().find("p",id="3").b.text,"\n\n")
+
+    name= br.get_current_page().find("p",id="3").b.text
+    print(name)
+    paragraph = br.get_current_page().find("p",id="3").text.replace(name,"")
+    print (paragraph)
+
+    """
+    parser= CommonRegex()
+    print (parser.addresses(paragraph))
+    """
+    street_address_validate_pattern = r"(?:((?:\d[\d ]+)?[A-Za-z][A-Za-z ]+)[\s,]*([A-Za-z#0-9][A-Za-z#0-9 ]+)?[\s,]*)?(?:([A-Za-z][A-Za-z ]+)[\s,]+)?((?=AL|AK|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA‌​|ME|MH|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|MP|OH|OK|OR|PW|PA|PR|RI|SC|SD‌​|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)[A-Z]{2})(?:[,\s]+(\d{5}(?:-\d{4})?))?"
+    address=re.findall(street_address_validate_pattern, paragraph) 
+
+    print (address.group())
+
+    print ("\n---------------------------------------------\n")
+
+    #address= 
+
+
 
     
   
