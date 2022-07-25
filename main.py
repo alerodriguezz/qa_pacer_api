@@ -108,20 +108,48 @@ for i in obj['content']:
     print("Debtor Info: \n")
     #print (br.get_current_page().find("p",id="3").b.text,"\n\n")
 
+
+    # retrieve debtor name
     name= br.get_current_page().find("p",id="3").b.text
     print(name)
+    if (name=="Box Check"):
+      print ("\n---------------------------------------------\n")
+      continue
+      
+    
+
+    #remove name from paragraph string obj
     paragraph = br.get_current_page().find("p",id="3").text.replace(name,"")
-    print (paragraph)
+    
+    #retrieve debtor address w/ regex
+    street_address_validate_pattern = r"(?:((?:\d[\d ]+)?[A-Za-z][A-Za-z ]+)[\s,]*([A-Za-z#0-9][A-Za-z#0-9 ]+)?[\s,]*)?(?:([A-Za-z][A-Za-z ]+)[\s,]+)?((?=AL|AK|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA‌​|ME|MH|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|MP|OH|OK|OR|PW|PA|PR|RI|SC|SD‌​|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)[A-Z]{2})(?:[,\s]+(\d{5}(?:-\d{4})?))?"
+    temp=re.search(street_address_validate_pattern, paragraph) 
+    address=temp.group()
+    print (address)
+
+    #remove address from paragraph string obj
+    paragraph = paragraph.replace(address,"")
+
+    #retrieve phone number 
+    parser= CommonRegex(paragraph)
+    phone_num=parser.phones[:1]
+    print("phone number: ",str(phone_num)[2:-2])
+
+    #remove phone num from paragraph string obj
+    paragraph = paragraph.replace(str(phone_num)[2:-2],"")
+    
+
+    ssn_or_tax_num=paragraph.split(' ')[0]
+    temp_num=paragraph.split(' ')[-1]
+
+    print ('\n',ssn_or_tax_num,": ", temp_num)
 
     """
     parser= CommonRegex()
     print (parser.addresses(paragraph))
     """
-    street_address_validate_pattern = r"(?:((?:\d[\d ]+)?[A-Za-z][A-Za-z ]+)[\s,]*([A-Za-z#0-9][A-Za-z#0-9 ]+)?[\s,]*)?(?:([A-Za-z][A-Za-z ]+)[\s,]+)?((?=AL|AK|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA‌​|ME|MH|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|MP|OH|OK|OR|PW|PA|PR|RI|SC|SD‌​|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)[A-Z]{2})(?:[,\s]+(\d{5}(?:-\d{4})?))?"
-    address=re.findall(street_address_validate_pattern, paragraph) 
-
-    print (address.group())
-
+   
+    
     print ("\n---------------------------------------------\n")
 
     #address= 
